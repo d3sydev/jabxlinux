@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forum & Discussions — Jabx Linux</title>
+  <style>
+    :root {
+      --bg: #09080d;
+      --surface: #110f1a;
+      --border: #262138;
+      --text: #e2e0ec;
+      --muted: #8b85a1;
+      --accent: #a855f7;
+      --accent-bright: #c084fc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.14), transparent 55%),
+        linear-gradient(rgba(38, 33, 56, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(38, 33, 56, 0.25) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text);
+      font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      line-height: 1.65;
+      font-size: 15px;
+      padding: 2rem 1.25rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      margin-bottom: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .logo span {
+      color: var(--accent-bright);
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      margin-left: 1.4rem;
+      font-size: 0.9rem;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--accent-bright);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .forum-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    footer a {
+      color: var(--accent-bright);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="logo">jabx<span>linux</span></a>
+      <nav>
+        <a href="index.html">home</a>
+        <a href="wiki.html">wiki</a>
+        <a href="recipes.html">recipes & contacts</a>
+        <a href="forum.html" class="active">forum</a>
+        <a href="portfolio.html">portfolio</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Community Discussions</h1>
+      <p class="subtitle">
+        Ask installation questions, share custom <code>jab</code> package recipes, and report kernel or init issues using your GitHub account.
+      </p>
+
+      <div class="forum-box">
+        <script src="https://giscus.app/client.js"
+                data-repo="d3sydev/jabxlinux"
+                data-repo-id="R_kgDOV3V4CQ"
+                data-category="General"
+                data-category-id="DIC_kwDOV3V4Cc4DLtAc"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="top"
+                data-theme="catppuccin_mocha"
+                data-lang="en"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </div>
+    </main>
+
+    <footer>
+      <div>Jabx Linux Forum — Powered by GitHub Discussions</div>
+      <div>Maintained by <a href="https://github.com" target="_blank" rel="noopener">d3sydev</a></div>
+    </footer>
+  </div>
+</body>
+</html>
