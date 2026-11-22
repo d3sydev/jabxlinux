@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Recipes & Contacts — Jabx Linux</title>
+  <style>
+    :root {
+      --bg: #09080f;
+      --surface: #110f1d;
+      --border: #26213d;
+      --text: #ede9fe;
+      --muted: #9489b8;
+      --violet: #a855f7;
+      --violet-bright: #c084fc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      line-height: 1.65;
+      font-size: 15px;
+      padding: 2rem 1.25rem;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo { font-size: 1.35rem; font-weight: 700; color: var(--text); text-decoration: none; }
+    .logo span { color: var(--violet-bright); }
+
+    nav { display: flex; gap: 1.35rem; flex-wrap: wrap; }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; }
+    nav a:hover, nav a.active { color: var(--violet-bright); }
+
+    h1 { font-size: 1.9rem; margin-bottom: 0.75rem; color: #fff; }
+    h2 {
+      font-size: 1.15rem;
+      color: var(--violet-bright);
+      margin: 2rem 0 0.85rem 0;
+    }
+    h2::before { content: ":: "; color: var(--muted); }
+
+    p { margin-bottom: 1rem; color: var(--text); }
+    .muted { color: var(--muted); }
+
+    .code-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      color: var(--violet-bright);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover { color: var(--violet-bright); border-color: var(--violet); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.1rem;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+
+    .contact-card:hover {
+      border-color: var(--violet);
+      transform: translateY(-2px);
+    }
+
+    .contact-card .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-card a {
+      color: var(--violet-bright);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    footer {
+      margin-top: 3.5rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    footer a { color: var(--violet-bright); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="logo">jabx<span>linux</span></a>
+      <nav>
+        <a href="index.html">home</a>
+        <a href="wiki.html">wiki (20 ch)</a>
+        <a href="recipes.html" class="active">custom recipes</a>
+        <a href="https://github.com/d3sydev" target="_blank" rel="noopener">github</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Writing Custom Package Recipes</h1>
+      <p class="muted">
+        Need software that is not yet in the official Jabx repository? Because <strong>jab</strong> builds directly from
+        plaintext recipes, adding your own local package takes less than 30 seconds.
+      </p>
+
+      <h2>1. Local Repository Directory</h2>
+      <p>
+        Create a directory for your package inside <code>/var/db/jab/local/&lt;package-name&gt;/</code> and place a single
+        file named <code>package</code> inside it. Local recipes automatically take priority over upstream repository recipes.
+      </p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyPre(this)">copy</button>
+        <pre>sudo mkdir -p /var/db/jab/local/mytool
+sudo hx /var/db/jab/local/mytool/package</pre>
+      </div>
+
+      <h2>2. Example: Compiling a Rust Project</h2>
+      <p>
+        Use the <code>$PKG_DIR</code> environment variable as your installation root. <code>jab</code> tracks every file placed inside
+        <code>$PKG_DIR</code> to generate a clean removal manifest.
+      </p>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyPre(this)">copy</button>
+        <pre>name=d3clock
+version=0.1.0
+url=https://github.com/d3sydev/d3clock.git
+depends=rust
+build=cargo build --release && install -Dm755 target/release/d3clock "$PKG_DIR/usr/bin/d3clock"</pre>
+      </div>
+
+      <h2>3. Example: Compiling a C / Makefile Tarball</h2>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyPre(this)">copy</button>
+        <pre>name=htop
+version=3.3.0
+url=https://github.com/htop-dev/htop/releases/download/3.3.0/htop-3.3.0.tar.xz
+sha256=a69acf9b42ff592c4861010fce7d1006805f4d6ef0e8705be222238826efe6ea
+depends=ncurses
+build=./configure --prefix=/usr && make -j$(nproc) && make DESTDIR="$PKG_DIR" install</pre>
+      </div>
+
+      <h2>4. Build & Install Your Custom Package</h2>
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyPre(this)">copy</button>
+        <pre>sudo jab i d3clock
+jab l</pre>
+      </div>
+
+      <h2>Maintainer & Contacts</h2>
+      <p class="muted">
+        Jabx Linux is an independent, niche systems engineering project maintained by <strong>d3sydev</strong>.
+        For bug reports, recipe patches, or architectural discussions:
+      </p>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="label">GitHub / Source & Portfolio</div>
+          <a href="https://github.com/d3sydev" target="_blank" rel="noopener">github.com/d3sydev</a>
+        </div>
+        <div class="contact-card">
+          <div class="label">Package Recipes Repo</div>
+          <a href="https://github.com/d3sydev" target="_blank" rel="noopener">d3sydev/jabx-repo</a>
+        </div>
+        <div class="contact-card">
+          <div class="label">Maintainer Handle</div>
+          <a href="https://github.com/d3sydev" target="_blank" rel="noopener">@d3sydev</a>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div>Jabx Linux — Custom Build Recipes</div>
+      <div><a href="index.html">← Back to Home</a></div>
+    </footer>
+  </div>
+
+  <script>
+    function copyPre(btn) {
+      const text = btn.parentElement.querySelector("pre").innerText;
+      navigator.clipboard.writeText(text);
+      const old = btn.textContent;
+      btn.textContent = "copied";
+      setTimeout(() => { btn.textContent = old; }, 1200);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jabx Linux — Minimalist KISS Distribution</title>
+  <style>
+    :root {
+      --bg: #09080d;
+      --surface: #110f1a;
+      --surface-hover: #181524;
+      --border: #262138;
+      --border-glow: #7c3aed;
+      --text: #e2e0ec;
+      --muted: #8b85a1;
+      --accent: #a855f7;
+      --accent-bright: #c084fc;
+      --cyan: #818cf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.14), transparent 55%),
+        linear-gradient(rgba(38, 33, 56, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(38, 33, 56, 0.25) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text);
+      font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      line-height: 1.65;
+      font-size: 15px;
+      padding: 2rem 1.25rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      margin-bottom: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .logo span {
+      color: var(--accent-bright);
+      text-shadow: 0 0 12px rgba(192, 132, 252, 0.45);
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      margin-left: 1.4rem;
+      font-size: 0.9rem;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--accent-bright);
+      text-shadow: 0 0 10px rgba(192, 132, 252, 0.4);
+    }
+
+    .hero {
+      margin-bottom: 3.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    @media (max-width: 680px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .ascii-box {
+        order: -1;
+        justify-self: start;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--accent-bright);
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-bright);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-bright);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--accent-bright), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 560px;
+      margin-bottom: 1.75rem;
+    }
+
+    .ascii-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.15rem 1.35rem;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+
+    .ascii-box:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 24px rgba(124, 58, 237, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .ascii-art {
+      color: var(--accent-bright);
+      text-shadow: 0 0 10px rgba(192, 132, 252, 0.35);
+      font-size: 0.88rem;
+      line-height: 1.25;
+      white-space: pre;
+      user-select: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      border-color: var(--accent);
+      background: rgba(168, 85, 247, 0.12);
+      color: var(--accent-bright);
+    }
+
+    .btn:hover {
+      border-color: var(--accent-bright);
+      box-shadow: 0 0 16px rgba(168, 85, 247, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .metrics { grid-template-columns: 1fr; }
+    }
+
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1rem 1.2rem;
+      transition: border-color 0.2s;
+    }
+
+    .metric:hover {
+      border-color: var(--border-glow);
+    }
+
+    .metric-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent-bright);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    section {
+      margin-bottom: 3.25rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      color: var(--accent-bright);
+      margin-bottom: 1.1rem;
+      text-transform: lowercase;
+    }
+
+    h2::before {
+      content: ":: ";
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.2rem;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: var(--border-glow);
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .terminal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.15rem;
+    }
+
+    .cmd-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.55rem 0;
+      border-bottom: 1px dashed var(--border);
+      gap: 1rem;
+    }
+
+    .cmd-row:last-child {
+      border-bottom: none;
+    }
+
+    .cmd-code {
+      color: var(--accent-bright);
+      font-size: 0.9rem;
+    }
+
+    .cmd-desc {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.75rem;
+      padding: 0.22rem 0.55rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-btn:hover {
+      color: var(--accent-bright);
+      border-color: var(--accent-bright);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    footer a {
+      color: var(--accent-bright);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="index.html" class="logo">jabx<span>linux</span></a>
+      <nav>
+        <a href="index.html" class="active">home</a>
+        <a href="wiki.html">wiki</a>
+        <a href="recipes.html">recipes & contacts</a>
+        <a href="portfolio.html">portfolio</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div>
+          <div class="badge"><span class="dot"></span> x86_64 // musl + dinit + jab</div>
+          <h1>Zero bloat. <span>Pure control.</span> Built in Rust.</h1>
+          <p class="subtitle">
+            Jabx Linux is an independent, source-based KISS distribution engineered for speed and clarity.
+            Bring your own Linux kernel, manage packages with <strong>jab</strong>, and run a rock-solid userland.
+          </p>
+          <div class="actions">
+            <a href="wiki.html" class="btn btn-primary">Read Installation Wiki</a>
+            <a href="recipes.html" class="btn">Write Custom Recipes</a>
+          </div>
+        </div>
+
+        <div class="ascii-box" title="Jabx Linux Web Emblem">
+          <pre class="ascii-art">    \_______/
+ `.,-'\_____/`-.,'
+  /`..'\ _ /`.,'\
+ /  /`.,' `.,'\  \
+/__/__/     \__\__\__
+\  \  \     /  /  /
+ \  \,'`._,'`./  /
+  \,'`./___\,'`./
+ ,'`-./_____\,-'`.
+     /       \</pre>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-val">~18 MB</div>
+          <div class="metric-label">Compressed Stage3 Rootfs</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val">~55 MB</div>
+          <div class="metric-label">Idle RAM Footprint</div>
+        </div>
+        <div class="metric">
+          <div class="metric-val">100%</div>
+          <div class="metric-label">Kernel Agnostic Userland</div>
+        </div>
+      </div>
+
+      <section>
+        <h2>architecture</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Preinstalled jab</h3>
+            <p>Written from scratch in Rust. Syncs recipes directly from GitHub, resolves dependencies, and tracks clean file manifests.</p>
+          </div>
+          <div class="card">
+            <h3>dinit & jabinit</h3>
+            <p>Ships with fast dinit service supervision by default, with optional drop-in support for custom Rust PID 1 (jabinit).</p>
+          </div>
+          <div class="card">
+            <h3>Bring Your Kernel</h3>
+            <p>No bloated distro kernels. Compile vanilla or custom Linux kernels tailored strictly to your own hardware.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>jab quickstart</h2>
+        <div class="terminal">
+          <div class="cmd-row">
+            <div>
+              <div class="cmd-code">$ sudo jab i busybox</div>
+              <div class="cmd-desc">Resolve dependencies, build from source, and install a package</div>
+            </div>
+            <button class="copy-btn" onclick="copyCmd(this, 'sudo jab i busybox')">copy</button>
+          </div>
+          <div class="cmd-row">
+            <div>
+              <div class="cmd-code">$ sudo jab u -f</div>
+              <div class="cmd-desc">Sync GitHub recipe tree and perform a full system rebuild</div>
+            </div>
+            <button class="copy-btn" onclick="copyCmd(this, 'sudo jab u -f')">copy</button>
+          </div>
+          <div class="cmd-row">
+            <div>
+              <div class="cmd-code">$ sudo jab r -p busybox</div>
+              <div class="cmd-desc">Remove an installed program cleanly via its manifest</div>
+            </div>
+            <button class="copy-btn" onclick="copyCmd(this, 'sudo jab r -p busybox')">copy</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>Jabx Linux Project — Niche KISS Distribution</div>
+      <div>Maintained by <a href="https://github.com/d3sydev" target="_blank" rel="noopener">d3sydev</a></div>
+    </footer>
+  </div>
+
+  <script>
+    function copyCmd(btn, text) {
+      navigator.clipboard.writeText(text);
+      const old = btn.textContent;
+      btn.textContent = "copied";
+      setTimeout(() => { btn.textContent = old; }, 1200);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>d3sydev // Systems & Rust Engineer</title>
+  <style>
+    :root {
+      --bg: #09080f;
+      --surface: #110f1d;
+      --surface-hover: #171426;
+      --border: #26213d;
+      --border-glow: #7c3aed;
+      --text: #eceaf6;
+      --muted: #8b85a8;
+      --accent: #a855f7;
+      --accent-soft: #c084fc;
+      --cyan: #38bdf8;
+      --green: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.14), transparent 55%),
+        linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text);
+      font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      line-height: 1.65;
+      font-size: 14.5px;
+      padding: 2rem 1.25rem;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.25rem;
+      margin-bottom: 2.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    nav {
+      display: flex;
+      gap: 1.35rem;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.15s ease;
+    }
+
+    nav a:hover {
+      color: var(--accent-soft);
+    }
+
+    .hero {
+      margin-bottom: 3.25rem;
+      padding: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--cyan), transparent);
+    }
+
+    .prompt-line {
+      color: var(--accent-soft);
+      font-size: 0.84rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    h1 {
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 0.9rem;
+      font-weight: 700;
+    }
+
+    h1 span {
+      color: var(--accent-soft);
+    }
+
+    .bio {
+      color: var(--muted);
+      max-width: 660px;
+      margin-bottom: 1.5rem;
+    }
+
+    .tags {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.75rem;
+    }
+
+    .tag {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--cyan);
+      padding: 0.2rem 0.6rem;
+      font-size: 0.78rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.55rem 1.05rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary {
+      border-color: var(--accent);
+      color: var(--accent-soft);
+      background: rgba(168, 85, 247, 0.08);
+    }
+
+    .btn:hover {
+      border-color: var(--accent-soft);
+      transform: translateY(-1px);
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    h2 {
+      font-size: 1.05rem;
+      color: var(--accent-soft);
+      margin-bottom: 1.15rem;
+      text-transform: lowercase;
+    }
+
+    h2::before {
+      content: "## ";
+      color: var(--muted);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--border-glow);
+      background: var(--surface-hover);
+    }
+
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .project-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .status {
+      font-size: 0.74rem;
+      padding: 0.12rem 0.45rem;
+      border: 1px solid var(--border);
+      color: var(--green);
+    }
+
+    .status.wip {
+      color: var(--accent-soft);
+    }
+
+    .project-desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .project-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--cyan);
+      border-top: 1px dashed var(--border);
+      padding-top: 0.65rem;
+    }
+
+    .project-footer a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .project-footer a:hover {
+      color: var(--accent-soft);
+    }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .stack-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.95rem 1.05rem;
+    }
+
+    .stack-box h3 {
+      font-size: 0.85rem;
+      color: var(--cyan);
+      margin-bottom: 0.4rem;
+    }
+
+    .stack-box p {
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    .contact-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+    }
+
+    .contact-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.45rem 0;
+      border-bottom: 1px dashed var(--border);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .contact-row:last-child {
+      border-bottom: none;
+    }
+
+    .contact-key {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .contact-val {
+      color: var(--accent-soft);
+      font-size: 0.88rem;
+      text-decoration: none;
+    }
+
+    .contact-val:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 1.35rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="#" class="logo">d3sy<span>dev</span></a>
+      <nav>
+        <a href="#projects">projects</a>
+        <a href="#environment">environment</a>
+        <a href="#contact">contact</a>
+        <a href="https://github.com/d3sydev" target="_blank" rel="noopener">github</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="hero">
+        <div class="prompt-line">d3sy@artix:~$ whoami --verbose<span class="cursor"></span></div>
+        <h1>Systems programmer &amp; <span>Rust</span> developer.</h1>
+        <p class="bio">
+          Building minimalist Linux distributions, source-based package managers, PID 1 service supervisors,
+          and keyboard-driven Wayland environments from scratch. Focused on KISS principles, low memory footprint,
+          and zero-bloat system architecture.
+        </p>
+        <div class="tags">
+          <span class="tag">Rust</span>
+          <span class="tag">C</span>
+          <span class="tag">Linux Kernel</span>
+          <span class="tag">musl</span>
+          <span class="tag">Wayland / Smithay</span>
+          <span class="tag">Network Security</span>
+        </div>
+        <div class="actions">
+          <a href="https://github.com/d3sydev" target="_blank" rel="noopener" class="btn btn-primary">GitHub Profile</a>
+          <a href="#projects" class="btn">View Projects</a>
+        </div>
+      </div>
+
+      <section id="projects">
+        <h2>featured projects</h2>
+        <div class="projects-grid">
+          <div class="project-card">
+            <div>
+              <div class="project-top">
+                <span class="project-title">Jabx Linux</span>
+                <span class="status wip">in development</span>
+              </div>
+              <p class="project-desc">
+                Minimalist, source-based x86_64 KISS distribution powered by musl libc, BusyBox, dinit, and custom Rust system tools.
+              </p>
+            </div>
+            <div class="project-footer">
+              <span>OS // Linux + musl</span>
+              <a href="https://github.com/d3sydev" target="_blank" rel="noopener">repo &rarr;</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-top">
+                <span class="project-title">jab</span>
+                <span class="status wip">active</span>
+              </div>
+              <p class="project-desc">
+                Zero-bloat source package manager written in pure Rust. Supports dependency resolution, isolated builds, and manifest tracking.
+              </p>
+            </div>
+            <div class="project-footer">
+              <span>Rust // std</span>
+              <a href="https://github.com/d3sydev" target="_blank" rel="noopener">source &rarr;</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-top">
+                <span class="project-title">jabinit &amp; jsh</span>
+                <span class="status wip">planned</span>
+              </div>
+              <p class="project-desc">
+                Optional lightweight PID 1 init supervisor and fast, configurable interactive shell built specifically for the Jabx ecosystem.
+              </p>
+            </div>
+            <div class="project-footer">
+              <span>Rust // POSIX</span>
+              <a href="https://github.com/d3sydev" target="_blank" rel="noopener">specs &rarr;</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-top">
+                <span class="project-title">wlwm</span>
+                <span class="status wip">architecture</span>
+              </div>
+              <p class="project-desc">
+                Keyboard-first Wayland compositor built on Smithay featuring an infinite 2D workspace canvas and spatial navigation.
+              </p>
+            </div>
+            <div class="project-footer">
+              <span>Rust // Wayland</span>
+              <a href="https://github.com/d3sydev" target="_blank" rel="noopener">concept &rarr;</a>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div>
+              <div class="project-top">
+                <span class="project-title">d3clock</span>
+                <span class="status">released</span>
+              </div>
+              <p class="project-desc">
+                Minimalist terminal clock and utility written in Rust with clean CLI ergonomics and zero unnecessary dependencies.
+              </p>
+            </div>
+            <div class="project-footer">
+              <span>Rust // CLI</span>
+              <a href="https://github.com/d3sydev/d3clock" target="_blank" rel="noopener">github &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="environment">
+        <h2>daily driver &amp; workflow</h2>
+        <div class="stack-grid">
+          <div class="stack-box">
+            <h3>OS &amp; Init</h3>
+            <p>Artix Linux (x86_64) running dinit without systemd.</p>
+          </div>
+          <div class="stack-box">
+            <h3>WM &amp; Terminal</h3>
+            <p>vxwm tiling window manager + WezTerm + yazi.</p>
+          </div>
+          <div class="stack-box">
+            <h3>Editor &amp; Shell</h3>
+            <p>Helix modal editor + Zsh with pure keyboard navigation.</p>
+          </div>
+          <div class="stack-box">
+            <h3>Virtualization</h3>
+            <p>QEMU / KVM + libvirt for OS bootstrapping and testing.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact">
+        <h2>contact &amp; links</h2>
+        <div class="contact-box">
+          <div class="contact-row">
+            <span class="contact-key">GitHub</span>
+            <a class="contact-val" href="https://github.com/d3sydev" target="_blank" rel="noopener">github.com/d3sydev</a>
+          </div>
+          <div class="contact-row">
+            <span class="contact-key">Primary Focus</span>
+            <span class="contact-val" style="color: var(--text);">Systems Programming, Linux Internals, Rust</span>
+          </div>
+          <div class="contact-row">
+            <span class="contact-key">PGP / Public Keys</span>
+            <a class="contact-val" href="https://github.com/d3sydev.keys" target="_blank" rel="noopener">github.com/d3sydev.keys</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div>d3sydev // Minimalism &amp; Systems Engineering</div>
+      <div>Built with pure HTML &amp; CSS — zero trackers, zero JS bloat</div>
+    </footer>
+  </div>
+</body>
+</html>
